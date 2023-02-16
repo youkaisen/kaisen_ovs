@@ -108,7 +108,8 @@ void route_create(switchlink_handle_t vrf_h,
                   switchlink_ip_addr_t *dst,
                   switchlink_ip_addr_t *gateway,
                   switchlink_handle_t ecmp_h,
-                  switchlink_handle_t intf_h) {
+                  switchlink_handle_t intf_h,
+                  switchlink_mac_addr_t mac_addr) {
   if (!dst || (!gateway && !ecmp_h)) {
     if (ecmp_h) {
       ecmp_delete(ecmp_h);
@@ -117,6 +118,7 @@ void route_create(switchlink_handle_t vrf_h,
   }
 
   bool ecmp_valid = false;
+  bool db_add = false;
   switchlink_handle_t nhop_h = g_cpu_rx_nhop_h;
   if (!ecmp_h) {
     // Ignore NULL gateway address, dont create a NHOP for that
@@ -171,6 +173,13 @@ void route_create(switchlink_handle_t vrf_h,
   route_info.ecmp = ecmp_valid;
   route_info.nhop_h = nhop_h;
   route_info.intf_h = intf_h;
+  if (mac_addr != NULL)
+    memcpy(route_info.mac_addr, mac_addr, sizeof(switchlink_mac_addr_t));
+
+  // add the route to the db
+  if (switchlink_db_route_add(&route_info) == SWITCHLINK_DB_STATUS_SUCCESS) {
+    db_add = true;
+  }
 
   // add the route
   VLOG_INFO("Create route: 0x%x/%d", dst->ip.v4addr.s_addr,
@@ -179,15 +188,14 @@ void route_create(switchlink_handle_t vrf_h,
     if (route_info.ecmp) {
       ecmp_delete(route_info.nhop_h);
     }
+    if (db_add)
+      switchlink_db_route_delete(&route_info);
     return;
   }
 
-  // add the route to the db
-  if (switchlink_db_route_add(&route_info) == SWITCHLINK_DB_STATUS_SUCCESS) {
-    if (route_info.ecmp) {
+    if (db_add && route_info.ecmp) {
       switchlink_db_ecmp_ref_inc(route_info.nhop_h);
     }
-  }
 }
 
 /*
@@ -484,7 +492,7 @@ void process_route_msg(struct nlmsghdr *nlmsg, int type) {
                  (dst_valid ? &dst_addr : NULL),
                  (gateway_valid ? &gateway_addr : NULL),
                  ecmp_h,
-                 ifinfo.intf_h);
+                 ifinfo.intf_h, ifinfo.mac_addr);
   } else {
     VLOG_INFO("Delete route with addr: 0x%x", dst_valid ?
                                              dst_addr.ip.v4addr.s_addr : 0);

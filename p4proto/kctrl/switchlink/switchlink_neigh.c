@@ -253,7 +253,7 @@ void neigh_create(switchlink_handle_t vrf_h,
   }
 
   // add a host route
-  route_create(g_default_vrf_h, ipaddr, ipaddr, 0, intf_h);
+  route_create(g_default_vrf_h, ipaddr, ipaddr, 0, intf_h, NULL);
 }
 
 /* TODO: P4-OVS: Dummy Processing of Netlink messages received

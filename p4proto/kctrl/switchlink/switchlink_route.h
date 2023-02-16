@@ -21,7 +21,8 @@ extern void route_create(switchlink_handle_t vrf_h,
                          switchlink_ip_addr_t *dst,
                          switchlink_ip_addr_t *gateway,
                          switchlink_handle_t ecmp_h,
-                         switchlink_handle_t intf_h);
+                         switchlink_handle_t intf_h,
+                         switchlink_mac_addr_t mac_addr);
 
 extern void route_delete(switchlink_handle_t vrf_h, switchlink_ip_addr_t *dst);
 

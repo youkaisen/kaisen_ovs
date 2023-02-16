@@ -957,6 +957,24 @@ switchlink_db_status_t switchlink_db_route_get_info(
   return SWITCHLINK_DB_STATUS_ITEM_NOT_FOUND;
 }
 
+switchlink_db_status_t switchlink_db_route_ip_get_info(
+    uint32_t ip_addr, switchlink_db_route_info_t *route_info) {
+  tommy_node *node = tommy_list_head(&switchlink_db_route_obj_list);
+  while (node) {
+    switchlink_db_route_obj_t *obj = node->data;
+    node = node->next;
+    if ((obj->route_info.vrf_h == route_info->vrf_h) &&
+        (ntohl(obj->route_info.ip_addr.ip.v4addr.s_addr) == ip_addr)) {
+      if (route_info) {
+        memcpy(
+            route_info, &(obj->route_info), sizeof(switchlink_db_route_info_t));
+      }
+      return SWITCHLINK_DB_STATUS_SUCCESS;
+    }
+  }
+  return SWITCHLINK_DB_STATUS_ITEM_NOT_FOUND;
+}
+
 /*
  * Routine Description:
  *    Initialize switchlink database

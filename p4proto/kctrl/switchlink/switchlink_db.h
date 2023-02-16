@@ -102,6 +102,7 @@ typedef struct switchlink_db_route_info_ {
   bool ecmp;
   switchlink_handle_t nhop_h;
   switchlink_handle_t intf_h;
+  switchlink_mac_addr_t mac_addr;
 } switchlink_db_route_info_t;
 
 typedef struct switchlink_db_tunnel_interface_info_ {

@@ -121,7 +121,7 @@ void process_address_msg(struct nlmsghdr *nlmsg, int type) {
       null_gateway.family = addr.family;
 
       // add the subnet route for prefix_len, derived from IFA_ADDRESS
-      route_create(g_default_vrf_h, &addr, &null_gateway, 0, intf_h);
+      route_create(g_default_vrf_h, &addr, &null_gateway, 0, intf_h, ifinfo.mac_addr);
 
       // add the interface route
       if (addrmsg->ifa_family == AF_INET) {
@@ -130,7 +130,7 @@ void process_address_msg(struct nlmsghdr *nlmsg, int type) {
         addr.prefix_len = 128;
       }
       // Add a route with new prefix_len
-      route_create(g_default_vrf_h, &addr, &null_gateway, 0, intf_h);
+      route_create(g_default_vrf_h, &addr, &null_gateway, 0, intf_h, ifinfo.mac_addr);
     }
   } else {
     if (addr_valid) {
