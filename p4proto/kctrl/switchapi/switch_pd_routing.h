@@ -65,6 +65,11 @@ switch_status_t switch_pd_nexthop_table_entry(
     const switch_pd_routing_info_t  *api_nexthop_pd_info,
     bool entry_add);
 
+switch_status_t switch_pd_route_forward_v4_table_entry(
+    switch_device_t device,
+    const switch_pd_routing_info_t  *api_nexthop_pd_info,
+    bool entry_add);
+
 switch_status_t switch_pd_neighbor_table_entry(
     switch_device_t device,
     const switch_pd_routing_info_t  *api_neighbor_pd_info,
