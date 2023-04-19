@@ -286,6 +286,7 @@ void process_neigh_msg(struct nlmsghdr *nlmsg, int type) {
   nbh = nlmsg_data(nlmsg);
   hdrlen = sizeof(struct ndmsg);
 
+  VLOG_DBG("------------neigh: family = %d",nbh->ndm_family);
   if (nbh->ndm_family == AF_INET6) {
     VLOG_DBG("Ignoring IPv6 neighbors, as IPv6 support is not available");
     return;
